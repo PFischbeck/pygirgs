@@ -22,7 +22,9 @@
     - prevents a call to random generator
 - [x] remove type 2 samples in threshold model
 - [x] remove bruteforce over all ij for type1
-- [ ] remove bruteforce over all ij for type2
+- [x] remove bruteforce over all ij for type2
+    - it is correct to sample all pairs in m_layer_pairs[k] for k in range(level, m_levels)
+    - doing so gives no perf. improvement over current implementation but is less code
 - [x] remove computations for assertions in release builds
 
 
@@ -114,7 +116,7 @@ constraints:
 - parent=(i-1)/2
 ```
 level: 4
-cells: 85
+cells: 15
 l       cells   indexRange
 0       1       [0..0]
 1       2       [1..2]
