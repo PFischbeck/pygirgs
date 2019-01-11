@@ -166,7 +166,25 @@ endif()
 add_subdirectory(source)
 add_subdirectory(docs)
 add_subdirectory(deploy)
+add_subdirectory(pybind11)
+pybind11_add_module(py${META_PROJECT_NAME} source/pygirgs/pygirgs.cpp)
 
+target_include_directories(pygirgs
+    PRIVATE
+    ${DEFAULT_INCLUDE_DIRECTORIES}
+    ${PROJECT_BINARY_DIR}/source/include
+)
+
+
+#
+# Libraries
+#
+
+target_link_libraries(pygirgs
+    PRIVATE
+    ${DEFAULT_LIBRARIES}
+    ${META_PROJECT_NAME}::girgs
+)
 
 #
 # Deployment (global project files)
