@@ -162,6 +162,11 @@ public:
      */
     unsigned int edges() const;
 
+	/**
+	 * @return a vector of the edges of the current graph
+	 */
+	std::vector<std::pair<int, int>> edgeList() const;
+
     /**
      * @brief
      *  Saves the graph in dot format (graphviz).

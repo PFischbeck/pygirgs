@@ -136,6 +136,15 @@ unsigned int girgs::Generator::edges() const {
     return edges;
 }
 
+std::vector<std::pair<int, int>> girgs::Generator::edgeList() const {
+	std::vector<std::pair<int, int>> edgeList;
+	edgeList.reserve(edges());
+	for (auto& from : m_graph)
+		for (auto to : from.edges)
+			edgeList.push_back(std::make_pair(from.index, to->index));
+
+	return edgeList;
+}
 
 void Generator::saveDot(std::string file) const {
     if(m_graph.empty()){
