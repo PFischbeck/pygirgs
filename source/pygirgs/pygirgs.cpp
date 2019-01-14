@@ -10,7 +10,7 @@ PYBIND11_MODULE(pygirgs, m) {
 		.def(py::init())
 		.def("set_weights", (void (girgs::Generator::*)(int, double, int)) &girgs::Generator::setWeights)
 		.def("set_positions", (void (girgs::Generator::*)(int, int, int)) &girgs::Generator::setPositions)
-		.def("scale_weights", (void (girgs::Generator::*)(int, int, double)) &girgs::Generator::scaleWeights)
+		.def("scale_weights", (void (girgs::Generator::*)(double, int, double)) &girgs::Generator::scaleWeights)
 		.def("generate", (void (girgs::Generator::*)(double, int)) &girgs::Generator::generate)
 		.def("edges", &girgs::Generator::edges)
 		.def("edge_list", &girgs::Generator::edgeList)

@@ -6,6 +6,12 @@
 #include <girgs/Node.h>
 #include <girgs/girgs_api.h>
 
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
+
 namespace girgs {
 
 GIRGS_API double calculateRadius(int n, double alpha, double T, int deg);
