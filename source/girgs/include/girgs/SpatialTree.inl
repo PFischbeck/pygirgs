@@ -45,7 +45,7 @@ void SpatialTree<D>::generateEdges(std::vector<Node>& graph, double alpha, int s
     }
 
     // one random generator and distribution for each thread
-    const auto num_threads = omp_get_max_threads();
+	const auto num_threads = 1; // omp_get_max_threads();
     m_gens.resize(num_threads);
     m_dists.resize(num_threads);
     for (int thread = 0; thread < num_threads; thread++) {
