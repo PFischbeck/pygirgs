@@ -8,6 +8,7 @@ namespace py = pybind11;
 PYBIND11_MODULE(pygirgs, m) {
 	py::class_<girgs::Generator>(m, "Generator")
 		.def(py::init())
+		.def("set_weights", (void (girgs::Generator::*)(const std::vector<double> &)) &girgs::Generator::setWeights)
 		.def("set_weights", (void (girgs::Generator::*)(int, double, int)) &girgs::Generator::setWeights)
 		.def("set_positions", (void (girgs::Generator::*)(int, int, int)) &girgs::Generator::setPositions)
 		.def("scale_weights", (void (girgs::Generator::*)(double, int, double)) &girgs::Generator::scaleWeights)
