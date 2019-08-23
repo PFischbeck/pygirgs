@@ -27,8 +27,8 @@ include(WriteCompilerDetectionHeader)
 
 
 # Include custom cmake modules
-include(cmake/GenerateTemplateExportHeader.cmake)
 include(cmake/GetGitRevisionDescription.cmake)
+include(cmake/DownloadProject.cmake)
 
 
 #
@@ -49,8 +49,8 @@ set(META_AUTHOR_ORGANIZATION "Hasso Plattner Institute")
 set(META_AUTHOR_DOMAIN       "https://github.com/chistopher/girgs/")
 set(META_AUTHOR_MAINTAINER   "christopher.weyand@hpi.de")
 set(META_VERSION_MAJOR       "1")
-set(META_VERSION_MINOR       "1")
-set(META_VERSION_PATCH       "0")
+set(META_VERSION_MINOR       "0")
+set(META_VERSION_PATCH       "1")
 set(META_VERSION_REVISION    "${GIT_REV}")
 set(META_VERSION             "${META_VERSION_MAJOR}.${META_VERSION_MINOR}.${META_VERSION_PATCH}")
 set(META_NAME_VERSION        "${META_PROJECT_NAME} v${META_VERSION} (${META_VERSION_REVISION})")
@@ -67,10 +67,12 @@ string(TOUPPER ${META_PROJECT_ID} META_PROJECT_ID)
 # Project options
 option(BUILD_SHARED_LIBS      "Build shared instead of static libraries."              ON)
 option(OPTION_SELF_CONTAINED  "Create a self-contained install with all dependencies." OFF)
-option(OPTION_BUILD_TESTS     "Build tests."                                           ON)
-option(OPTION_BUILD_EXAMPLES  "Build examples."                                        ON)
+option(OPTION_BUILD_TESTS     "Build tests."                                           OFF)
+option(OPTION_BUILD_BENCHMARKS "Build benchmarks."                                     OFF)
+option(OPTION_BUILD_EXAMPLES  "Build examples."                                        OFF)
+option(OPTION_BUILD_CLI       "Build CLI's."                                           ON)
 option(OPTION_BUILD_DOCS      "Build documentation."                                   OFF)
-
+option(OPTION_USE_BMI2        "Use PDEP Instruction (requires bmi2 instruction set; SLOW ON AMD)" OFF)
 
 #
 # Declare project
@@ -184,6 +186,7 @@ target_link_libraries(pygirgs
     PRIVATE
     ${DEFAULT_LIBRARIES}
     ${META_PROJECT_NAME}::girgs
+    ${META_PROJECT_NAME}::hypergirgs
 )
 
 #

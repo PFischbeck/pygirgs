@@ -20,8 +20,7 @@ message(STATUS "Lib ${target}")
 string(MAKE_C_IDENTIFIER ${target} target_id)
 string(TOUPPER ${target_id} target_id)
 set(feature_file         "include/${target}/${target}_features.h")
-set(export_file          "include/${target}/${target}_export.h")
-set(template_export_file "include/${target}/${target}_api.h")
+set(export_file          "include/${target}/${target}_api.h")
 set(export_macro         "${target_id}_API")
 
 
@@ -34,20 +33,23 @@ set(source_path  "${CMAKE_CURRENT_SOURCE_DIR}/source")
 
 set(headers
     ${include_path}/Generator.h
+    ${include_path}/Helper.h
+    ${include_path}/Hyperbolic.h
+    ${include_path}/IntSort.h
     ${include_path}/Node.h
+    ${include_path}/ScopedTimer.h
     ${include_path}/SpatialTree.h
     ${include_path}/SpatialTree.inl
     ${include_path}/SpatialTreeCoordinateHelper.h
     ${include_path}/SpatialTreeCoordinateHelper.inl
     ${include_path}/WeightLayer.h
-    ${include_path}/WeightLayer.inl
-    ${include_path}/Hyperbolic.h
+    ${include_path}/WeightScaling.h
 )
 
 set(sources
     ${source_path}/Generator.cpp
-    ${source_path}/Node.cpp
     ${source_path}/Hyperbolic.cpp
+    ${source_path}/WeightScaling.cpp
 )
 
 # Group source files
@@ -91,10 +93,6 @@ write_compiler_detection_header(
 generate_export_header(${target}
     EXPORT_FILE_NAME  ${export_file}
     EXPORT_MACRO_NAME ${export_macro}
-)
-generate_template_export_header(${target}
-    ${target_id}
-    ${template_export_file}
 )
 
 
@@ -166,10 +164,10 @@ target_compile_definitions(${target}
 
 target_compile_options(${target}
     PRIVATE
-    $<$<BOOL:${OPENMP_FOUND}>:${OpenMP_CXX_FLAGS}>
 
     PUBLIC
     ${DEFAULT_COMPILE_OPTIONS}
+    ${OpenMP_CXX_FLAGS}
 
     INTERFACE
 )
@@ -181,10 +179,10 @@ target_compile_options(${target}
 
 target_link_libraries(${target}
     PRIVATE
-    $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:$<$<BOOL:"${OPENMP_FOUND}">:${OpenMP_CXX_FLAGS}>>
 
     PUBLIC
     ${DEFAULT_LINKER_OPTIONS}
+    $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:${OpenMP_CXX_FLAGS}>
 
     INTERFACE
 )

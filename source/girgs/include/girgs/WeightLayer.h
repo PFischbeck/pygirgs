@@ -1,8 +1,4 @@
-
 #pragma once
-
-#include <vector>
-#include <cmath>
 
 #include <girgs/Node.h>
 #include <girgs/SpatialTreeCoordinateHelper.h>
@@ -21,11 +17,24 @@ namespace girgs {
  */
 template<unsigned int D>
 class WeightLayer {
+    using Helper = SpatialTreeCoordinateHelper<D>;
+
 public:
-
     WeightLayer() = delete;
-    WeightLayer(unsigned int layer, unsigned int targetLevel, const SpatialTreeCoordinateHelper<D>& helper, std::vector<Node*>&& nodes);
 
+    WeightLayer(const WeightLayer&) = delete;
+    WeightLayer& operator=(const WeightLayer&) = delete;
+
+    WeightLayer(WeightLayer&&) = default;
+    WeightLayer& operator=(WeightLayer&&) = default;
+
+    WeightLayer(unsigned int targetLevel,
+                const Node<D>* base,
+                const unsigned int* prefix_sum)
+        : m_target_level{targetLevel},
+          m_base{base}, 
+          m_prefix_sums{prefix_sum}
+    {}
 
     /**
      * @brief
@@ -39,7 +48,13 @@ public:
      * @return
      *  Returns how many points there are in cells {begin..end} using prefix sums. Begin and end are the first/last descendants of cell in target level.
      */
-    int pointsInCell(unsigned int cell, unsigned int level) const;
+    int pointsInCell(unsigned int cell, unsigned int level) const {
+        auto cellBoundaries = levelledCell(cell, level);
+        assert(cellBoundaries.first  + Helper::firstCellOfLevel(level) < Helper::firstCellOfLevel(m_target_level+1));
+        assert(cellBoundaries.second + Helper::firstCellOfLevel(level) < Helper::firstCellOfLevel(m_target_level+1));
+
+        return m_prefix_sums[cellBoundaries.second+1] - m_prefix_sums[cellBoundaries.first];
+    }
 
 
     /**
@@ -58,26 +73,59 @@ public:
      *  This should be less than the number of points of this weight layer in the given cell
      *  (i.e. less than what was returned by pointsInCell(unsigned int, unsigned int) const ).
      * @return
-     *  Returns a pointer to the requested node.
+     *  Returns the requested node.
      */
-    Node* kthPoint(unsigned int cell, unsigned int level, int k) const;
+    const Node<D>& kthPoint(unsigned int cell, unsigned int level, int k) const {
+        auto cellBoundaries = levelledCell(cell, level);
+        return m_base[m_prefix_sums[cellBoundaries.first] + k];
+    }
 
-	Node* const * firstPointPointer(unsigned int cell, unsigned int level) const;
+
+    /**
+     * @brief
+     *  Return points to the first element of the cell ("begin") and the first element after the cell ("end")
+     *
+     * @param cell
+     *  The cell that contains the points.
+     * @param level
+     *  The level of the given cell.
+     *  This should be less or equal to the target level of this weight layer.
+     * @return
+     *  {begin, end}
+     */
+    std::pair<const Node<D>*, const Node<D>*> cellIterators(unsigned int cell, unsigned int level) const {
+        auto cellBoundaries = levelledCell(cell, level);
+        const auto begin_end = std::make_pair(m_base + m_prefix_sums[cellBoundaries.first],
+                                              m_base + m_prefix_sums[cellBoundaries.second+1]);
+        assert(begin_end.first <= begin_end.second);
+        return begin_end;
+    }
 
 protected:
 
-    const unsigned int m_layer;             ///< the index of the layer
-    const unsigned int m_target_level;      ///< the insertion level for the current weight layer (v(i) = wiw0/W)
+    std::pair<unsigned int, unsigned int> levelledCell(unsigned int cell, unsigned int level) const {
+        assert(level <= m_target_level);
+        assert(Helper::firstCellOfLevel(level) <= cell && cell < Helper::firstCellOfLevel(level + 1)); // cell is from fromLevel
 
-    std::vector<Node*> m_nodes;             ///< all nodes of the current weight layer
+        // we want the begin-th and end-th cell in level targetLevel to be the first and last descendant of cell in this level
+        // we could apply the firstChild function to find the first descendant but this is in O(1)
+        auto descendants = Helper::numCellsInLevel(m_target_level - level);
+        auto localIndexCell = cell - Helper::firstCellOfLevel(level);
+        auto localIndexDescendant = localIndexCell * descendants; // each cell before the parent splits in 2^D cells in the next layer that are all before our descendant
+        auto begin = localIndexDescendant;
+        auto end = begin + descendants - 1;
 
-    std::vector<int>   m_points_in_cell;    ///< the number of points in each cell of target_level
-    std::vector<int>   m_prefix_sums;       ///< for each cell c in target level: the sum of points of this layer in all cells <c
-    std::vector<Node*> m_A;                 ///< m_A[m_prefix_sums[i]+k] contains the k-th point in the i-th cell of target level
+        assert(begin <= end);
+
+        return {begin, end};
+    }
+
+protected:
+
+    const unsigned int  m_target_level;     ///< the insertion level for the current weight layer (v(i) = wiw0/W)
+    const Node<D>*      m_base;             ///< sorted array of all nodes
+    const unsigned int* m_prefix_sums;      ///< for each cell c in target level: sum of nodes in m_base before first node in c
 };
-
-
 
 } // namespace girgs
 
-#include <girgs/WeightLayer.inl>

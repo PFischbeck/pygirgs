@@ -1,11 +1,5 @@
 
 #
-# External dependencies
-#
-
-find_package(${META_PROJECT_NAME} REQUIRED HINTS "${CMAKE_CURRENT_SOURCE_DIR}/../../../")
-
-#
 # Executable name and options
 #
 
@@ -20,7 +14,9 @@ message(STATUS "Test ${target}")
 
 set(sources
     main.cpp
+    BitManipulation_test.cpp
     DegreeEstimation_test.cpp
+    Helper_test.cpp
     Generator_test.cpp
     SpatialTreeCoordinateHelper_test.cpp
 )
@@ -69,7 +65,8 @@ target_link_libraries(${target}
     PRIVATE
     ${DEFAULT_LIBRARIES}
     ${META_PROJECT_NAME}::girgs
-    gmock-dev
+    gmock
+    gtest
 )
 
 

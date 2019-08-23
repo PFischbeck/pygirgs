@@ -13,7 +13,7 @@
 *.a
 
 # Build dir
-build*
+build*/
 debug_build
 release_build
 /bin
@@ -27,6 +27,8 @@ cmake-build-*
 *.sublime-project
 *.sublime-workspace
 .idea
+.vs/
+CMakeSettings.json
 
 # Local config windows
 _configure.bat
