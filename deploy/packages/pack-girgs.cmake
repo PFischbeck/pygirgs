@@ -15,13 +15,13 @@ endif()
 if("${CMAKE_SYSTEM_NAME}" MATCHES "Windows")
     # Windows installer
     set(OPTION_PACK_GENERATOR "NSIS;ZIP" CACHE STRING "Package targets")
-    set(PACK_COMPONENT_INSTALL ON)
+    set(PACK_COMPONENT_INSTALL OFF)
     set(PACK_INCLUDE_TOPDIR OFF)
 elseif(UNIX AND SYSTEM_DIR_INSTALL)
     # System installation packages for unix systems
     if("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
-        set(OPTION_PACK_GENERATOR "TGZ;DEB;RPM" CACHE STRING "Package targets")
-        set(PACK_COMPONENT_INSTALL ON)
+        set(OPTION_PACK_GENERATOR "TGZ;DEB" CACHE STRING "Package targets")
+        set(PACK_COMPONENT_INSTALL OFF)
         set(PACK_INCLUDE_TOPDIR OFF)
     else()
         set(OPTION_PACK_GENERATOR "TGZ" CACHE STRING "Package targets")
@@ -48,13 +48,21 @@ endif()
 #
 
 set(CPACK_COMPONENT_RUNTIME_DISPLAY_NAME "${META_PROJECT_NAME} library")
-set(CPACK_COMPONENT_RUNTIME_DESCRIPTION "Runtime components for ${META_PROJECT_NAME} library")
+set(CPACK_COMPONENT_RUNTIME_DESCRIPTION "The ${META_PROJECT_NAME} library")
 
 set(CPACK_COMPONENT_DEV_DISPLAY_NAME "C/C++ development files")
 set(CPACK_COMPONENT_DEV_DESCRIPTION "Development files for ${META_PROJECT_NAME} library")
 set(CPACK_COMPONENT_DEV_DEPENDS runtime)
 
 set(CPACK_COMPONENTS_ALL runtime dev)
+
+if (OPTION_BUILD_CLI)
+    set(CPACK_COMPONENT_CLI_DISPLAY_NAME "CLI applications")
+    set(CPACK_COMPONENT_CLI_DESCRIPTION "Command Line Clients for ${META_PROJECT_NAME} library")
+    set(CPACK_COMPONENT_CLI_DEPENDS runtime)
+
+    set(CPACK_COMPONENTS_ALL ${CPACK_COMPONENTS_ALL} cli)
+endif()
 
 if (OPTION_BUILD_EXAMPLES)
     set(CPACK_COMPONENT_EXAMPLES_DISPLAY_NAME "Example applications")
@@ -130,7 +138,7 @@ set(CPACK_RESOURCE_FILE_LICENSE                "${PROJECT_SOURCE_DIR}/LICENSE")
 set(CPACK_RESOURCE_FILE_README                 "${PROJECT_SOURCE_DIR}/README.md")
 set(CPACK_RESOURCE_FILE_WELCOME                "${PROJECT_SOURCE_DIR}/README.md")
 set(CPACK_PACKAGE_DESCRIPTION_FILE             "${PROJECT_SOURCE_DIR}/README.md")
-set(CPACK_PACKAGE_ICON                         "${PROJECT_SOURCE_DIR}/cmake-init-logo.png")
+set(CPACK_PACKAGE_ICON                         "${PROJECT_SOURCE_DIR}/${package_name}-logo.png")
 set(CPACK_PACKAGE_FILE_NAME                    "${package_name}-${CPACK_PACKAGE_VERSION}")
 set(CPACK_PACKAGE_INSTALL_DIRECTORY            "${package_name}")
 set(CPACK_PACKAGE_INSTALL_REGISTRY_KEY         "${package_name}")

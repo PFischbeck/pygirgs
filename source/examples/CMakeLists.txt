@@ -5,8 +5,7 @@ if(NOT OPTION_BUILD_EXAMPLES)
 endif()
 
 # Example applications
-add_subdirectory(benchmark)
-add_subdirectory(dev)
-add_subdirectory(dev2)
-add_subdirectory(girggen)
-add_subdirectory(hyper)
+add_subdirectory(bench_girg)
+add_subdirectory(bench_hyper)
+add_subdirectory(inclusion_single)
+add_subdirectory(inclusion_range)
