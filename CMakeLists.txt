@@ -160,6 +160,7 @@ if(NOT SYSTEM_DIR_INSTALL)
     endif()
 endif()
 
+set(CMAKE_BUILD_RPATH "$ORIGIN")
 
 #
 # Project modules
