@@ -147,9 +147,9 @@ else()
 endif()
 
 # Set runtime path
-set(CMAKE_SKIP_BUILD_RPATH            FALSE) # Add absolute path to all dependencies for BUILD
-set(CMAKE_BUILD_WITH_INSTALL_RPATH    FALSE) # Use CMAKE_INSTALL_RPATH for INSTALL
-set(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE) # Do NOT add path to dependencies for INSTALL
+#set(CMAKE_SKIP_BUILD_RPATH            FALSE) # Add absolute path to all dependencies for BUILD
+#set(CMAKE_BUILD_WITH_INSTALL_RPATH    TRUE) # Use CMAKE_INSTALL_RPATH for INSTALL
+#set(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE) # Do NOT add path to dependencies for INSTALL
 
 if(NOT SYSTEM_DIR_INSTALL)
     # Find libraries relative to binary
